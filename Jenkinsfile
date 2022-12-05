@@ -2,13 +2,13 @@ pipeline {
   agent any
 
 	tools {
-		nodejs "NodeJS"
+		maven "Maven"
 	}
 	
 	environment {
 		PROJECT_ID = 'tech-rnd-project'
                 CLUSTER_NAME = 'network18-cluster'
-                LOCATION = 'us-central1-a'
+                LOCATION = 'us-central1-c'
                 CREDENTIALS_ID = 'kubernetes'	
 	}
 	
@@ -18,13 +18,6 @@ pipeline {
 			    	checkout scm
 		    }
 	    }
-	    stage('build') {
-              steps {
-                  echo 'building the software'
-                  sh 'npm install'
-              }
-          }
-
 	    
 	    stage('Build Docker Image') {
 		    steps {
@@ -42,7 +35,7 @@ pipeline {
  				 sh 'sudo  apt-get update'
  				  sh 'sudo apt-get install pack-cli'
 			   
-				  sh 'pack build todo -t gcr.io/tech-rnd-project/todo --builder paketobuildpacks/builder:full'
+				  sh 'pack build springboot -t gcr.io/tech-rnd-project/springboot --builder paketobuildpacks/builder:base'
 			    
 		    }
 	    }
@@ -52,7 +45,7 @@ pipeline {
 			    script {
 				    echo "Push Docker Image"
 				        sh 'gcloud auth configure-docker'
-				        sh "sudo docker push gcr.io/tech-rnd-project/todo"
+				        sh "sudo docker push gcr.io/tech-rnd-project/springboot"
 				    
 					sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
 
