@@ -35,7 +35,7 @@ pipeline {
  				 sh 'sudo  apt-get update'
  				  sh 'sudo apt-get install pack-cli'
 			   
-				  sh 'pack build springboot -t gcr.io/tech-rnd-project/springboot --builder paketobuildpacks/builder:base'
+				  sh 'mvn spring-boot:build-image'
 			    
 		    }
 	    }
@@ -45,6 +45,7 @@ pipeline {
 			    script {
 				    echo "Push Docker Image"
 				        sh 'gcloud auth configure-docker'
+						sh "sudo docker tag springboot-java:0.0.1-SNAPSHOT springboot-java:gcr.io/tech-rnd-project/springboot"
 				        sh "sudo docker push gcr.io/tech-rnd-project/springboot"
 				    
 					sh 'curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl'
